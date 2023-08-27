@@ -1,4 +1,20 @@
 name: ArcherySMP
+description: A plugin made for the ArcherySMP by JovannMC.
+author: JovannMC
 version: '${project.version}'
 main: me.jovannmc.archerysmp.ArcherySMP
 api-version: '1.20'
+commands:
+  archer:
+    description: Archer command
+    permission: archerysmp.archer
+  hunter:
+    description: Hunter command
+    permission: archerysmp.hunter
+permissions:
+  archerysmp.archer:
+    description: Archer command
+    default: OP
+  archerysmp.hunter:
+    description: Hunter command
+    default: OP
