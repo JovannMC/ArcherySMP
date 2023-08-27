@@ -1,0 +1,4 @@
+name: ArcherySMP
+version: '${project.version}'
+main: me.jovannmc.archerysmp.ArcherySMP
+api-version: '1.20'
