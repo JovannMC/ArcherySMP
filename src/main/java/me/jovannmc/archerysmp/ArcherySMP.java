@@ -1,7 +1,5 @@
 package me.jovannmc.archerysmp;
 
-import me.jovannmc.archerysmp.commands.ArcherCommand;
-import me.jovannmc.archerysmp.commands.HunterCommand;
 import me.jovannmc.archerysmp.handlers.ArcherHandler;
 import me.jovannmc.archerysmp.handlers.HunterHandler;
 import me.jovannmc.archerysmp.utils.ConfigUtils;
