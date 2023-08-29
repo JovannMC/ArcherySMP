@@ -56,7 +56,7 @@ public class ConfigUtils {
     }
     public FileConfiguration getBans() { return bans; }
 
-    private void save(InputStream in, File file) {
+    public void save(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
             byte[] buf = new byte[1024];
@@ -73,14 +73,28 @@ public class ConfigUtils {
 
     public void saveFile(String fileName) {
         if (fileName.equalsIgnoreCase("config")) {
-            save(plugin.getResource("config.yml"), configFile);
+            try {
+                Bukkit.getLogger().info("Config saved!");
+                config.save(configFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Bukkit.getLogger().info("Config saved!");
         } else if (fileName.equalsIgnoreCase("data")) {
-            save(plugin.getResource("data.yml"), dataFile);
+            try {
+                Bukkit.getLogger().info("Data saved!");
+                data.save(dataFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Bukkit.getLogger().info("Data saved!");
         } else if (fileName.equalsIgnoreCase("bans")) {
-            save(plugin.getResource("bans.yml"), bansFile);
-            Bukkit.getLogger().info("Bans saved!");
+            try {
+                Bukkit.getLogger().info("Bans saved!");
+                bans.save(bansFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
