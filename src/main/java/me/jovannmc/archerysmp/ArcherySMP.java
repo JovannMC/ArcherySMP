@@ -1,6 +1,6 @@
 package me.jovannmc.archerysmp;
 
-import me.jovannmc.archerysmp.Utils.ConfigUtils;
+import me.jovannmc.archerysmp.utils.ConfigUtils;
 import me.jovannmc.archerysmp.handlers.ArcherHandler;
 import me.jovannmc.archerysmp.handlers.HunterHandler;
 import me.jovannmc.archerysmp.utils.Utils;
@@ -46,24 +46,16 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
             if (Bukkit.getOnlinePlayers().size() == 0) { Utils.sendMessage(sender, "&cThere are no players online."); return false; }
 
             Player randomPlayer = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
-            Utils.sendMessage(sender, "&a" + randomPlayer.getName() + " &7is the archer!"); // Makes sure the console receives it too, if executed there
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player != sender || player != randomPlayer) {
-                    Utils.sendMessage(player, "&a" + randomPlayer.getName() + " &7is the archer!");
-                }
-            }
+            Utils.announceMessage("&a" + randomPlayer.getName() + " &7is the archer!");
+            Utils.sendMessage(randomPlayer, "&aYou are now an archer!");
             archerHandler.addArcher(randomPlayer);
         } else if (cmd.getName().equals("hunter")) {
             if (!sender.hasPermission("archerysmp.hunter")) { Utils.sendMessage(sender, "&cYou don't have permission to use that command."); return false; }
             if (Bukkit.getOnlinePlayers().size() == 0) { Utils.sendMessage(sender, "&cThere are no players online."); return false; }
 
             Player randomPlayer = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
-            Utils.sendMessage(sender, "&a" + randomPlayer.getName() + " &7is the hunter!"); // Makes sure the console receives it too, if executed there
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player != sender || player != randomPlayer) {
-                    Utils.sendMessage(player, "&a" + randomPlayer.getName() + " &7is the hunter!");
-                }
-            }
+            Utils.announceMessage("&a" + randomPlayer.getName() + " &7is the hunter!");
+            Utils.sendMessage(randomPlayer, "&aYou are now a hunter!");
             hunterHandler.addHunter(randomPlayer);
         }
         return false;
