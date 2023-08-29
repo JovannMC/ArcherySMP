@@ -91,8 +91,4 @@ public class ArcherHandler implements Listener {
             }
         }
     }
-
-    private void setActionBarCooldown(Player player, long cooldown) {
-
-    }
 }
