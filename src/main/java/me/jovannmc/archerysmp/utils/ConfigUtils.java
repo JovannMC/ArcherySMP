@@ -1,5 +1,7 @@
 package me.jovannmc.archerysmp.utils;
 
+import me.jovannmc.archerysmp.ArcherySMP;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -9,28 +11,39 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ConfigUtils {
-    private File configFile = new File(Utils.plugin.getDataFolder() + File.separator, "config.yml");
-    private File dataFile = new File(Utils.plugin.getDataFolder() + File.separator, "data.yml");
-    private File bansFile = new File(Utils.plugin.getDataFolder() + File.separator, "bans.yml");
+    private final ArcherySMP plugin;
 
-    private FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-    private FileConfiguration data = YamlConfiguration.loadConfiguration(dataFile);
-    private FileConfiguration bans = YamlConfiguration.loadConfiguration(bansFile);
+    private File configFile;
+    private File dataFile;
+    private File bansFile;
+    private FileConfiguration config;
+    private FileConfiguration data;
+    private FileConfiguration bans;
+
+    public ConfigUtils(ArcherySMP plugin) {
+        this.plugin = plugin;
+        this.configFile = new File(plugin.getDataFolder() + File.separator, "config.yml");
+        this.dataFile = new File(plugin.getDataFolder() + File.separator, "data.yml");
+        this.bansFile = new File(plugin.getDataFolder() + File.separator, "bans.yml");
+        this.config = YamlConfiguration.loadConfiguration(configFile);
+        this.data = YamlConfiguration.loadConfiguration(dataFile);
+        this.bans = YamlConfiguration.loadConfiguration(bansFile);
+    }
 
     public void configTasks() {
         if (!configFile.exists() && configFile != null) {
             configFile.getParentFile().mkdirs();
-            save(Utils.plugin.getResource("config.yml"), configFile);
+            save(plugin.getResource("config.yml"), configFile);
         }
 
         if (!dataFile.exists() && dataFile != null	) {
-            dataFile.getParentFile().mkdir();
-            save(Utils.plugin.getResource("data.yml"), dataFile);
+            dataFile.getParentFile().mkdirs();
+            save(plugin.getResource("data.yml"), dataFile);
         }
 
         if (!bansFile.exists() && bansFile != null	) {
-            bansFile.getParentFile().mkdir();
-            save(Utils.plugin.getResource("bans.yml"), bansFile);
+            bansFile.getParentFile().mkdirs();
+            save(plugin.getResource("bans.yml"), bansFile);
         }
     }
 
@@ -43,7 +56,7 @@ public class ConfigUtils {
     }
     public FileConfiguration getBans() { return bans; }
 
-    public void save(InputStream in, File file) {
+    private void save(InputStream in, File file) {
         try {
             OutputStream out = new FileOutputStream(file);
             byte[] buf = new byte[1024];
@@ -55,6 +68,19 @@ public class ConfigUtils {
             in.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void saveFile(String fileName) {
+        if (fileName.equalsIgnoreCase("config")) {
+            save(plugin.getResource("config.yml"), configFile);
+            Bukkit.getLogger().info("Config saved!");
+        } else if (fileName.equalsIgnoreCase("data")) {
+            save(plugin.getResource("data.yml"), dataFile);
+            Bukkit.getLogger().info("Data saved!");
+        } else if (fileName.equalsIgnoreCase("bans")) {
+            save(plugin.getResource("bans.yml"), bansFile);
+            Bukkit.getLogger().info("Bans saved!");
         }
     }
 }

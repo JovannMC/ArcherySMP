@@ -28,7 +28,7 @@ public class CooldownHandler extends BukkitRunnable {
             sendActionBar(player, "");
         } else {
             String formattedTime = formatTime(remainingTime);
-            sendActionBar(player, new Utils().color("&e" + abilityName + "cooldown: " + formattedTime));
+            sendActionBar(player, new Utils().color("&e" + abilityName + " cooldown: " + formattedTime));
         }
     }
 
