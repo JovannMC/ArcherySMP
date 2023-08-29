@@ -11,12 +11,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
     Utils utils = new Utils();
-    ConfigUtils configUtils = new ConfigUtils();
 
     ArcherHandler archerHandler = new ArcherHandler();
     HunterHandler hunterHandler = new HunterHandler();
+
+    public HashMap<UUID, Long> archers = new HashMap<>();
+    public HashMap<UUID, Long> hunters = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -28,7 +33,8 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        archers.clear();
+        hunters.clear();
     }
 
     @Override

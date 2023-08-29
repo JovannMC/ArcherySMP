@@ -15,13 +15,12 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class HunterHandler implements Listener {
     private final ArcherySMP plugin = JavaPlugin.getPlugin(ArcherySMP.class);
     Utils utils = new Utils();
-
-    private HashMap<UUID, Long> hunters = new HashMap<>();
 
     public void addHunter(Player player) {
         utils.sendMessage(player, "&aYou are now a hunter!");
@@ -30,17 +29,18 @@ public class HunterHandler implements Listener {
         crossbow.getItemMeta().setUnbreakable(true);
         crossbow.getItemMeta().setDisplayName("Hunter's Crossbow");
         crossbow.getItemMeta().addEnchant(Enchantment.QUICK_CHARGE, 5, true);
+        crossbow.getItemMeta().setLore(utils.colorizeList(List.of("&7Left click to &cPoison&7!")));
         player.getInventory().addItem(crossbow);
     }
 
     @EventHandler
     public void bowLeftClick(PlayerInteractEvent e) {
-        if (hunters.containsKey(e.getPlayer().getUniqueId()) && e.getPlayer().getInventory().getItemInMainHand().getType() == Material.CROSSBOW) {
+        if (plugin.hunters.containsKey(e.getPlayer().getUniqueId()) && e.getPlayer().getInventory().getItemInMainHand().getType() == Material.CROSSBOW) {
             Action action = e.getAction();
 
             if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
                 // Poison all entities within a 10 block radius, cooldown of 1 minute
-                if (hunters.containsKey(e.getPlayer().getUniqueId())) {
+                if (plugin.hunters.containsKey(e.getPlayer().getUniqueId())) {
                     utils.sendMessage(e.getPlayer(), "&cYou can't use 'Poison' yet!");
                     return;
                 }
@@ -50,7 +50,7 @@ public class HunterHandler implements Listener {
                         ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 1));
                     }
                 });
-                hunters.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + 60000);
+                plugin.hunters.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + 60000);
 
                 CooldownHandler cooldownHandler = new CooldownHandler(e.getPlayer(), 60000, "Poison");
                 cooldownHandler.runTaskTimer(plugin, 0L, 20L);

@@ -4,9 +4,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-public class SelectedDeathEvent implements Listener {
+public class DeathEvent implements Listener {
     @EventHandler
-    public void onDeath(PlayerDeathEvent e) {
+    public void onSelectedDeath(PlayerDeathEvent e) {
+
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e) {
 
     }
 }
