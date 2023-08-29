@@ -2,11 +2,17 @@ package me.jovannmc.archerysmp.events;
 
 import me.jovannmc.archerysmp.ArcherySMP;
 import me.jovannmc.archerysmp.utils.Utils;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class DeathEvent implements Listener {
     private final ArcherySMP plugin = ArcherySMP.getPlugin(ArcherySMP.class);
@@ -21,19 +27,25 @@ public class DeathEvent implements Listener {
             lives--;
             plugin.lives.put(player.getUniqueId(), lives);
             plugin.configUtils.getData().set(player.getUniqueId() + ".lives", lives);
+            plugin.configUtils.saveFile("data");
             Utils.sendMessage(player, "&cYou have &4" + lives + " &clives remaining!");
 
             // Check if player has no lives
             if (lives == 0) {
                 // Ban player for 3 days
-                plugin.configUtils.getBans().set(player.getUniqueId().toString(), System.currentTimeMillis() + 259200000L);
-                plugin.configUtils.saveFile("bans");
-                player.kickPlayer(Utils.color("&cYou lost all your lives!\nYou are now banned for 3 days!"));
+                BanList banList = Bukkit.getBanList(BanList.Type.NAME);
 
-                long banTime = plugin.configUtils.getBans().getLong(player.getUniqueId().toString());
-                long currentTime = System.currentTimeMillis();
-                long banTimeHours = (banTime - currentTime) / 3600000L;
-                Bukkit.getBanList(org.bukkit.BanList.Type.NAME).addBan(player.getName(), Utils.color("&cYou lost all your lives!\nYou are banned for " + banTimeHours + " hours!"), null, null);
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DAY_OF_YEAR, 3); // Add 3 days
+                Date expirationDate = calendar.getTime();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("your_timezone_here"));
+
+                String formattedExpiration = dateFormat.format(expirationDate);
+
+                banList.addBan(player.getName(), Utils.color("&cYou lost all your lives!"), expirationDate, null);
+                player.kickPlayer(Utils.color("&cYou lost all your lives!\nYou are banned until " + formattedExpiration));
             }
         }
 

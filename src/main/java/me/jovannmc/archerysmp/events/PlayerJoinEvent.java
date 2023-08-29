@@ -15,24 +15,6 @@ public class PlayerJoinEvent implements Listener {
     public void onPlayerLogin(PlayerLoginEvent e) {
         Player player = e.getPlayer();
 
-        if (Bukkit.getBanList(org.bukkit.BanList.Type.NAME).isBanned(e.getPlayer().getName())) {
-            if (plugin.configUtils.getBans().contains(player.getUniqueId().toString())) {
-                long banTime = plugin.configUtils.getBans().getLong(player.getUniqueId().toString());
-                long currentTime = System.currentTimeMillis();
-                if (currentTime > banTime) {
-                    Bukkit.getBanList(org.bukkit.BanList.Type.NAME).pardon(player.getName());
-                    plugin.configUtils.getBans().set(player.getUniqueId().toString(), null);
-                    plugin.configUtils.saveFile("bans");
-                } else {
-                    // get ban time, which is in epoch time, and convert it to hours
-                    long banTimeHours = (banTime - currentTime) / 3600000L;
-                    player.kickPlayer(Utils.color("&cYou lost all your lives!\nYou are banned for " + banTimeHours + " hours!"));
-                    return;
-                }
-            }
-            return;
-        }
-
         // New player
         if (!plugin.configUtils.getData().contains(player.getUniqueId().toString()) || plugin.configUtils.getData().getInt(player.getUniqueId() + ".lives") == 0) {
             plugin.lives.put(player.getUniqueId(), 5);

@@ -15,19 +15,15 @@ public class ConfigUtils {
 
     private File configFile;
     private File dataFile;
-    private File bansFile;
     private FileConfiguration config;
     private FileConfiguration data;
-    private FileConfiguration bans;
 
     public ConfigUtils(ArcherySMP plugin) {
         this.plugin = plugin;
         this.configFile = new File(plugin.getDataFolder() + File.separator, "config.yml");
         this.dataFile = new File(plugin.getDataFolder() + File.separator, "data.yml");
-        this.bansFile = new File(plugin.getDataFolder() + File.separator, "bans.yml");
         this.config = YamlConfiguration.loadConfiguration(configFile);
         this.data = YamlConfiguration.loadConfiguration(dataFile);
-        this.bans = YamlConfiguration.loadConfiguration(bansFile);
     }
 
     public void configTasks() {
@@ -40,11 +36,6 @@ public class ConfigUtils {
             dataFile.getParentFile().mkdirs();
             save(plugin.getResource("data.yml"), dataFile);
         }
-
-        if (!bansFile.exists() && bansFile != null	) {
-            bansFile.getParentFile().mkdirs();
-            save(plugin.getResource("bans.yml"), bansFile);
-        }
     }
 
     public FileConfiguration getConfig() {
@@ -54,7 +45,6 @@ public class ConfigUtils {
     public FileConfiguration getData() {
         return data;
     }
-    public FileConfiguration getBans() { return bans; }
 
     public void save(InputStream in, File file) {
         try {
@@ -88,13 +78,6 @@ public class ConfigUtils {
                 e.printStackTrace();
             }
             Bukkit.getLogger().info("Data saved!");
-        } else if (fileName.equalsIgnoreCase("bans")) {
-            try {
-                Bukkit.getLogger().info("Bans saved!");
-                bans.save(bansFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 }
