@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,6 +38,23 @@ public class ArcherHandler implements Listener {
         Utils.sendMessage(player, "&aYou are now an archer!");
         plugin.archers.add(player.getUniqueId());
 
+        for (ItemStack item : player.getInventory().get) {
+            if (item != null && item.getType() == Material.BOW) {
+                ItemMeta itemMeta = item.getItemMeta();
+                PersistentDataContainer itemDataContainer = itemMeta.getPersistentDataContainer();
+                if (itemDataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
+                    if (itemDataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING).equals("archer")) {
+                        Utils.announceMessage("&a" + player.getName() + " &7is the archer!");
+                        Utils.sendMessage(player, "&aYou are now an archer!");
+
+                        plugin.configUtils.getData().set(player.getUniqueId() + ".role", "archer");
+                        plugin.configUtils.saveFile("data");
+                        return;
+                    }
+                }
+            }
+        }
+
         ItemStack bow = new ItemStack(Material.BOW, 1);
         ItemMeta bowMeta = bow.getItemMeta();
 
@@ -50,18 +69,6 @@ public class ArcherHandler implements Listener {
         dataContainer.set(plugin.getRoleKey(), PersistentDataType.STRING, "archer");
 
         bow.setItemMeta(bowMeta);
-
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.BOW) {
-                ItemMeta itemMeta = item.getItemMeta();
-                PersistentDataContainer itemDataContainer = itemMeta.getPersistentDataContainer();
-                if (itemDataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
-                    if (itemDataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING).equals("archer")) {
-                        return;
-                    }
-                }
-            }
-        }
         player.getInventory().addItem(bow);
 
         Utils.announceMessage("&a" + player.getName() + " &7is the archer!");
@@ -72,44 +79,66 @@ public class ArcherHandler implements Listener {
     }
 
     @EventHandler
-    public void bowLeftClick(PlayerInteractEvent e) {
+    public void bowInteract(PlayerInteractEvent e) {
         if (plugin.archers.contains(e.getPlayer().getUniqueId()) && e.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOW) {
             Action action = e.getAction();
             if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                // Shoot a "super" arrow that deals 2 hearts, cooldown of 1 minute
-                if (superArrowCooldown.containsKey(e.getPlayer().getUniqueId())) {
-                    if (superArrowCooldown.get(e.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
-                        Utils.sendMessage(e.getPlayer(), "&cYou can't use 'Super arrow' yet!");
-                        return;
-                    }
-                }
-
-                boolean hasStrength = e.getPlayer().hasPotionEffect(PotionEffectType.INCREASE_DAMAGE);
-                AbstractArrow arrow = e.getPlayer().launchProjectile(Arrow.class, e.getPlayer().getLocation().getDirection());
-                double currentDamage = arrow.getDamage();
-                arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-                arrow.setDamage(currentDamage + (hasStrength ? 4.0 : 0.0));
-                superArrowCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + 60000);
-
-                CooldownHandler cooldownHandler = new CooldownHandler(e.getPlayer(), 60000, "Super arrow");
-                cooldownHandler.runTaskTimer(plugin, 0L, 20L);
+                shootSuperArrow(e.getPlayer());
             } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                // Give player "strength 2" (more arrow damage) for 10 seconds, cooldown of 40 seconds.
-                // Still allow bow to be used normally
-                if (strengthCooldown.containsKey(e.getPlayer().getUniqueId())) {
-                    if (strengthCooldown.get(e.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
-                        Utils.sendMessage(e.getPlayer(), "&cYou can't use 'Strength' yet!");
-                        return;
-                    }
-                }
-
-                e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
-                strengthCooldown.put(e.getPlayer().getUniqueId(), System.currentTimeMillis() + 40000);
-
-                CooldownHandler cooldownHandler = new CooldownHandler(e.getPlayer(), 40000, "Strength");
-                cooldownHandler.runTaskTimer(plugin, 0L, 20L);
+                strength(e.getPlayer());
             }
         }
+    }
+
+    @EventHandler
+    private void bowLeftClickEntity(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player && plugin.archers.contains(e.getDamager().getUniqueId()) && ((Player) e.getDamager()).getInventory().getItemInMainHand().getType() == Material.BOW) {
+            shootSuperArrow((Player) e.getDamager());
+        }
+    }
+
+    @EventHandler
+    private void bowRightClickEntity(PlayerInteractEntityEvent e) {
+        if (plugin.archers.contains(e.getPlayer().getUniqueId()) && e.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOW) {
+            strength(e.getPlayer());
+        }
+    }
+
+    private void shootSuperArrow(Player player) {
+        // Shoot a "super" arrow that deals 2 hearts, cooldown of 1 minute
+        if (superArrowCooldown.containsKey(player.getUniqueId())) {
+            if (superArrowCooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                Utils.sendMessage(player, "&cYou can't use 'Super arrow' yet!");
+                return;
+            }
+        }
+
+        boolean hasStrength = player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE);
+        AbstractArrow arrow = player.launchProjectile(Arrow.class, player.getLocation().getDirection());
+        double currentDamage = arrow.getDamage();
+        arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
+        arrow.setDamage(currentDamage + (hasStrength ? 4.0 : 0.0));
+        superArrowCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 60000);
+
+        CooldownHandler cooldownHandler = new CooldownHandler(player, 60000, "Super arrow");
+        cooldownHandler.runTaskTimer(plugin, 0L, 20L);
+    }
+
+    private void strength(Player player) {
+        // Give player "strength 2" (more arrow damage) for 10 seconds, cooldown of 40 seconds.
+        // Still allow bow to be used normally
+        if (strengthCooldown.containsKey(player.getUniqueId())) {
+            if (strengthCooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                Utils.sendMessage(player, "&cYou can't use 'Strength' yet!");
+                return;
+            }
+        }
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
+        strengthCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 40000);
+
+        CooldownHandler cooldownHandler = new CooldownHandler(player, 40000, "Strength");
+        cooldownHandler.runTaskTimer(plugin, 0L, 20L);
     }
 
     @EventHandler
