@@ -1,4 +1,4 @@
-package me.jovannmc.archerysmp.utils;
+package me.jovannmc.archerysmp.Utils;
 
 import me.jovannmc.archerysmp.ArcherySMP;
 import org.bukkit.configuration.file.FileConfiguration;

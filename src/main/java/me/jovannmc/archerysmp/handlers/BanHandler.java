@@ -1,6 +1,6 @@
 package me.jovannmc.archerysmp.handlers;
 
-import me.jovannmc.archerysmp.utils.ConfigUtils;
+import me.jovannmc.archerysmp.Utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

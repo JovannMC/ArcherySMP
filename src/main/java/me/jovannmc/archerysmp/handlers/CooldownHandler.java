@@ -1,5 +1,6 @@
 package me.jovannmc.archerysmp.handlers;
 
+
 import me.jovannmc.archerysmp.utils.Utils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
