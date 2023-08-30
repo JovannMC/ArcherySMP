@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -87,13 +86,6 @@ public class ArcherHandler implements Listener {
     private void bowLeftClickEntity(EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Player && plugin.archers.contains(e.getDamager().getUniqueId()) && ((Player) e.getDamager()).getInventory().getItemInMainHand().getType() == Material.BOW) {
             shootSuperArrow((Player) e.getDamager());
-        }
-    }
-
-    @EventHandler
-    private void bowRightClickEntity(PlayerInteractEntityEvent e) {
-        if (plugin.archers.contains(e.getPlayer().getUniqueId()) && e.getPlayer().getInventory().getItemInMainHand().getType() == Material.BOW) {
-            strength(e.getPlayer());
         }
     }
 

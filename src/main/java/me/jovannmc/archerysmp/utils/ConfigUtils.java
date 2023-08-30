@@ -69,7 +69,6 @@ public class ConfigUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Bukkit.getLogger().info("Config saved!");
         } else if (fileName.equalsIgnoreCase("data")) {
             try {
                 Bukkit.getLogger().info("Data saved!");
@@ -77,7 +76,6 @@ public class ConfigUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Bukkit.getLogger().info("Data saved!");
         }
     }
 }

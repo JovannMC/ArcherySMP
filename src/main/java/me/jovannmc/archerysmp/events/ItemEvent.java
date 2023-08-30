@@ -21,21 +21,19 @@ public class ItemEvent implements Listener {
     public void onItemPickup(EntityPickupItemEvent e) {
         if (!(e.getEntity() instanceof Player)) { return; }
         Player player = (Player) e.getEntity();
-        Bukkit.getLogger().info("Player: " + player.getName());
 
-        Bukkit.getLogger().info("Item: " + e.getItem().getItemStack().getType().toString());
         ItemMeta itemMeta = e.getItem().getItemStack().getItemMeta();
         PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
 
         if (dataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
-            Bukkit.getLogger().info("Role: " + dataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING));
             String role = dataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING);
-            if (role.equals("archer")) {
-                Bukkit.getLogger().info("Adding archer");
+
+            if (role.equals("archer") && !plugin.hunters.contains(player.getUniqueId())) {
                 plugin.archerHandler.addArcher(player, false);
-            } else if (role.equals("hunter")) {
-                Bukkit.getLogger().info("Adding hunter");
+            } else if (role.equals("hunter") && !plugin.archers.contains(player.getUniqueId())) {
                 plugin.hunterHandler.addHunter(player, false);
+            } else {
+                e.setCancelled(true);
             }
         }
     }
@@ -47,7 +45,6 @@ public class ItemEvent implements Listener {
         PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
 
         if (dataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
-            Bukkit.getLogger().info("Role: " + dataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING));
             String role = dataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING);
             Player owner = Bukkit.getPlayer(UUID.fromString(dataContainer.get(plugin.getOwnerKey(), PersistentDataType.STRING)));
             if (role.equals("archer")) {
