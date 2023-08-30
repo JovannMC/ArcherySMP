@@ -30,8 +30,10 @@ public class ItemEvent implements Listener {
 
             if (role.equals("archer") && !plugin.hunters.contains(player.getUniqueId())) {
                 plugin.archerHandler.addArcher(player, false);
+                dataContainer.set(plugin.getOwnerKey(), PersistentDataType.STRING, player.getUniqueId().toString());
             } else if (role.equals("hunter") && !plugin.archers.contains(player.getUniqueId())) {
                 plugin.hunterHandler.addHunter(player, false);
+                dataContainer.set(plugin.getOwnerKey(), PersistentDataType.STRING, player.getUniqueId().toString());
             } else {
                 e.setCancelled(true);
             }

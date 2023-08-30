@@ -21,7 +21,7 @@ public class PlayerJoinEvent implements Listener {
             plugin.configUtils.getData().set(player.getUniqueId() + ".lives", 5);
             plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
             plugin.configUtils.saveFile("data");
-            Utils.sendMessage(player, "&aWelcome to ArcherySMP!");
+            Utils.sendMessage(player, "&aWelcome to the ArcherySMP!");
         }
 
         // Existing player
