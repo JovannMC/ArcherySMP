@@ -1,0 +1,23 @@
+# ArcherySMP config.yml
+# The configuration file for the plugin
+defaultLives: 5
+maxLives: 10
+# Time (in days) the player is banned for after losing all their lives
+banLength: 3
+
+# Cooldowns are in seconds
+archer:
+  superArrow:
+    cooldown: 60
+  strength:
+    cooldown: 40
+    duration: 10
+    # 0 = Strength I, 1 = Strength II, 2 = Strength III
+    amplifier: 1
+    extraArrowDamage: 2.0
+hunter:
+  poison:
+    cooldown: 60
+    duration: 10
+    # 0 = Poison I, 1 = Poison II, 2 = Poison III
+    amplifier: 0

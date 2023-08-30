@@ -45,7 +45,10 @@ public class HunterHandler implements Listener {
         dataContainer.set(plugin.getOwnerKey(), PersistentDataType.STRING, player.getUniqueId().toString());
 
         crossbow.setItemMeta(crossbowMeta);
-        if (giveCrossbow) { player.getInventory().addItem(crossbow); }
+        if (giveCrossbow) {
+            player.getInventory().addItem(crossbow);
+            player.getInventory().addItem(new ItemStack(Material.ARROW, 64));
+        }
 
         Utils.announceMessage("&a" + player.getName() + " &7is a hunter!");
         Utils.sendMessage(player, "&aYou are now a hunter!");
@@ -89,15 +92,18 @@ public class HunterHandler implements Listener {
                 return;
             }
         }
+        int cooldown = plugin.getConfig().getInt("hunter.poison.cooldown") * 1000; // 1000 milliseconds = 1 second
+        int duration = plugin.getConfig().getInt("hunter.poison.duration") * 20; // 20 ticks = 1 second
+        int amplifier = plugin.getConfig().getInt("hunter.poison.amplifier");
 
         player.getWorld().getNearbyEntities(player.getLocation(), 10, 10, 10).forEach(entity -> {
             if (entity instanceof Player && entity != player) {
-                ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 0));
+                ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, duration, amplifier));
             }
         });
-        poisonCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 60000);
+        poisonCooldown.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
 
-        CooldownHandler cooldownHandler = new CooldownHandler(player, 60000, "Poison");
+        CooldownHandler cooldownHandler = new CooldownHandler(player, cooldown, "Poison");
         cooldownHandler.runTaskTimer(plugin, 0L, 20L);
     }
 }

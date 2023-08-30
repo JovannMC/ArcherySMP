@@ -32,6 +32,9 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        configUtils.setupDataConfig();
+
         // Register commands
         Bukkit.getPluginCommand("archer").setExecutor(this);
         Bukkit.getPluginCommand("hunter").setExecutor(this);
@@ -45,8 +48,6 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
 
         roleKey = new NamespacedKey(this, "role");
         ownerKey = new NamespacedKey(this, "owner");
-
-        configUtils.configTasks();
     }
 
     @Override

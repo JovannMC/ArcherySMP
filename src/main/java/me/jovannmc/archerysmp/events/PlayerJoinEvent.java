@@ -17,11 +17,18 @@ public class PlayerJoinEvent implements Listener {
 
         // New player
         if (!plugin.configUtils.getData().contains(player.getUniqueId().toString()) || plugin.configUtils.getData().getInt(player.getUniqueId() + ".lives") == 0) {
-            plugin.lives.put(player.getUniqueId(), 5);
-            plugin.configUtils.getData().set(player.getUniqueId() + ".lives", 5);
+            Bukkit.getLogger().info("New player");
+            int defaultLives = plugin.getConfig().getInt("defaultLives");
+            plugin.lives.put(player.getUniqueId(), defaultLives);
+            plugin.configUtils.getData().set(player.getUniqueId() + ".lives", defaultLives);
             plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
+            Bukkit.getLogger().info("Player lives: " + plugin.lives.get(player.getUniqueId()));
+            Bukkit.getLogger().info("Player role: player");
+            Bukkit.getLogger().info("defaultLives: " + defaultLives);
             plugin.configUtils.saveFile("data");
             Utils.sendMessage(player, "&aWelcome to the ArcherySMP!");
+            Bukkit.getLogger().info("config: " + plugin.getConfig().saveToString());
+            Bukkit.getLogger().info("data: " + plugin.configUtils.getData().saveToString());
         }
 
         // Existing player

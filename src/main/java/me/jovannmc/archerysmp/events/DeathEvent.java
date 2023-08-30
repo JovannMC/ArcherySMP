@@ -30,13 +30,12 @@ public class DeathEvent implements Listener {
             plugin.configUtils.saveFile("data");
             Utils.sendMessage(player, "&cYou have &4" + lives + " &clives remaining!");
 
-            // Check if player has no lives
             if (lives == 0) {
-                // Ban player for 3 days
+                int banLength = plugin.getConfig().getInt("banLength");
                 BanList banList = Bukkit.getBanList(BanList.Type.NAME);
 
                 Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DAY_OF_YEAR, 3); // Add 3 days
+                calendar.add(Calendar.DAY_OF_YEAR, banLength);
                 Date expirationDate = calendar.getTime();
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
@@ -54,6 +53,8 @@ public class DeathEvent implements Listener {
             Player killer = player.getKiller();
             if (plugin.lives.containsKey(killer.getUniqueId())) {
                 int lives = plugin.lives.get(killer.getUniqueId());
+                int maxLives = plugin.getConfig().getInt("maxLives");
+                if (lives >= maxLives) { return; }
                 lives++;
                 plugin.lives.put(killer.getUniqueId(), lives);
                 plugin.configUtils.getData().set(killer.getUniqueId() + ".lives", lives);

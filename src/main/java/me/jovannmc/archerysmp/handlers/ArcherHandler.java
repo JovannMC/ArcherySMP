@@ -52,7 +52,10 @@ public class ArcherHandler implements Listener {
 
         bow.setItemMeta(bowMeta);
 
-        if (giveBow) { player.getInventory().addItem(bow); }
+        if (giveBow) {
+            player.getInventory().addItem(bow);
+            player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+        }
 
         Utils.announceMessage("&a" + player.getName() + " &7is an archer!");
         Utils.sendMessage(player, "&aYou are now an archer!");
@@ -90,39 +93,41 @@ public class ArcherHandler implements Listener {
     }
 
     private void shootSuperArrow(Player player) {
-        // Shoot a "super" arrow that deals 2 hearts, cooldown of 1 minute
         if (superArrowCooldown.containsKey(player.getUniqueId())) {
             if (superArrowCooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
                 Utils.sendMessage(player, "&cYou can't use 'Super arrow' yet!");
                 return;
             }
         }
+        int cooldown = plugin.getConfig().getInt("archer.superArrow.cooldown") * 1000; // 1000 milliseconds = 1 second
+        int extraArrowDamage = plugin.getConfig().getInt("archer.strength.extraArrowDamage");
 
         boolean hasStrength = player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE);
         AbstractArrow arrow = player.launchProjectile(Arrow.class, player.getLocation().getDirection());
         double currentDamage = arrow.getDamage();
         arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
-        arrow.setDamage(currentDamage + (hasStrength ? 4.0 : 0.0));
-        superArrowCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 60000);
+        arrow.setDamage(currentDamage + (hasStrength ? extraArrowDamage : 0.0));
+        superArrowCooldown.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
 
-        CooldownHandler cooldownHandler = new CooldownHandler(player, 60000, "Super arrow");
+        CooldownHandler cooldownHandler = new CooldownHandler(player, cooldown, "Super arrow");
         cooldownHandler.runTaskTimer(plugin, 0L, 20L);
     }
 
     private void strength(Player player) {
-        // Give player "strength 2" (more arrow damage) for 10 seconds, cooldown of 40 seconds.
-        // Still allow bow to be used normally
         if (strengthCooldown.containsKey(player.getUniqueId())) {
             if (strengthCooldown.get(player.getUniqueId()) > System.currentTimeMillis()) {
                 Utils.sendMessage(player, "&cYou can't use 'Strength' yet!");
                 return;
             }
         }
+        int cooldown = plugin.getConfig().getInt("archer.strength.cooldown") * 1000; // 1000 milliseconds = 1 second
+        int duration = plugin.getConfig().getInt("archer.strength.duration") * 20; // 20 ticks = 1 second
+        int amplifier = plugin.getConfig().getInt("archer.strength.amplifier");
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 1));
-        strengthCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 40000);
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, duration, amplifier));
+        strengthCooldown.put(player.getUniqueId(), System.currentTimeMillis() + cooldown);
 
-        CooldownHandler cooldownHandler = new CooldownHandler(player, 40000, "Strength");
+        CooldownHandler cooldownHandler = new CooldownHandler(player, cooldown, "Strength");
         cooldownHandler.runTaskTimer(plugin, 0L, 20L);
     }
 
@@ -131,12 +136,13 @@ public class ArcherHandler implements Listener {
         if (e.getEntity() instanceof Player) {
             Player player = (Player) e.getEntity();
             if (plugin.archers.contains(player.getUniqueId())) {
+                int extraArrowDamage = plugin.getConfig().getInt("archer.strength.extraArrowDamage");
                 boolean hasStrength = player.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE);
                 AbstractArrow arrow = (AbstractArrow) e.getProjectile();
                 arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
 
                 double currentDamage = arrow.getDamage();
-                double newDamage = currentDamage + (hasStrength ? 2.0 : 0.0);
+                double newDamage = currentDamage + (hasStrength ? extraArrowDamage : 0.0);
 
                 arrow.setDamage(newDamage);
             }
