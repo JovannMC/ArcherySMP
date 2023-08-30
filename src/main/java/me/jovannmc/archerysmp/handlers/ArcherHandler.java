@@ -35,7 +35,6 @@ public class ArcherHandler implements Listener {
     }
 
     public void addArcher(Player player, boolean giveBow) {
-        Utils.sendMessage(player, "&aYou are now an archer!");
         plugin.archers.add(player.getUniqueId());
 
         ItemStack bow = new ItemStack(Material.BOW, 1);
@@ -50,15 +49,25 @@ public class ArcherHandler implements Listener {
 
         PersistentDataContainer dataContainer = bowMeta.getPersistentDataContainer();
         dataContainer.set(plugin.getRoleKey(), PersistentDataType.STRING, "archer");
+        dataContainer.set(plugin.getOwnerKey(), PersistentDataType.STRING, player.getUniqueId().toString());
 
         bow.setItemMeta(bowMeta);
 
         if (giveBow) { player.getInventory().addItem(bow); }
 
-        Utils.announceMessage("&a" + player.getName() + " &7is the archer!");
+        Utils.announceMessage("&a" + player.getName() + " &7is an archer!");
         Utils.sendMessage(player, "&aYou are now an archer!");
 
         plugin.configUtils.getData().set(player.getUniqueId() + ".role", "archer");
+        plugin.configUtils.saveFile("data");
+    }
+
+    public void removeArcher(Player player) {
+        plugin.archers.remove(player.getUniqueId());
+        Utils.sendMessage(player, "&cYou are no longer an archer!");
+        Utils.announceMessage("&a" + player.getName() + " &7is no longer an archer!");
+
+        plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
         plugin.configUtils.saveFile("data");
     }
 

@@ -2,7 +2,7 @@ package me.jovannmc.archerysmp;
 
 import me.jovannmc.archerysmp.events.DeathEvent;
 import me.jovannmc.archerysmp.events.PlayerJoinEvent;
-import me.jovannmc.archerysmp.events.SelectedItemPickupEvent;
+import me.jovannmc.archerysmp.events.ItemEvent;
 import me.jovannmc.archerysmp.handlers.ArcherHandler;
 import me.jovannmc.archerysmp.handlers.HunterHandler;
 import me.jovannmc.archerysmp.utils.ConfigUtils;
@@ -24,6 +24,7 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
     public ArrayList<UUID> hunters = new ArrayList<>();
     public HashMap<UUID, Integer> lives = new HashMap<>();
     private NamespacedKey roleKey;
+    private NamespacedKey ownerKey;
 
     public ConfigUtils configUtils = new ConfigUtils(this);
     public ArcherHandler archerHandler = new ArcherHandler(this);
@@ -39,10 +40,11 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
         Bukkit.getPluginManager().registerEvents(archerHandler, this);
         Bukkit.getPluginManager().registerEvents(hunterHandler, this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new SelectedItemPickupEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new ItemEvent(), this);
         Bukkit.getPluginManager().registerEvents(new DeathEvent(), this);
 
         roleKey = new NamespacedKey(this, "role");
+        ownerKey = new NamespacedKey(this, "owner");
 
         configUtils.configTasks();
     }
@@ -81,4 +83,6 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
     public NamespacedKey getRoleKey() {
         return roleKey;
     }
+    public NamespacedKey getOwnerKey() { return ownerKey; }
+
 }

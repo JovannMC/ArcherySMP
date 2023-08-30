@@ -30,7 +30,6 @@ public class HunterHandler implements Listener {
     }
 
     public void addHunter(Player player, boolean giveCrossbow) {
-        Utils.sendMessage(player, "&aYou are now a hunter!");
         plugin.hunters.add(player.getUniqueId());
 
         ItemStack crossbow = new ItemStack(Material.CROSSBOW, 1);
@@ -43,14 +42,24 @@ public class HunterHandler implements Listener {
 
         PersistentDataContainer dataContainer = crossbowMeta.getPersistentDataContainer();
         dataContainer.set(plugin.getRoleKey(), PersistentDataType.STRING, "hunter");
+        dataContainer.set(plugin.getOwnerKey(), PersistentDataType.STRING, player.getUniqueId().toString());
 
         crossbow.setItemMeta(crossbowMeta);
         if (giveCrossbow) { player.getInventory().addItem(crossbow); }
 
-        Utils.announceMessage("&a" + player.getName() + " &7is the hunter!");
+        Utils.announceMessage("&a" + player.getName() + " &7is a hunter!");
         Utils.sendMessage(player, "&aYou are now a hunter!");
 
         plugin.configUtils.getData().set(player.getUniqueId() + ".role", "hunter");
+        plugin.configUtils.saveFile("data");
+    }
+
+    public void removeHunter(Player player) {
+        plugin.hunters.remove(player.getUniqueId());
+        Utils.sendMessage(player, "&cYou are no longer a hunter!");
+        Utils.announceMessage("&a" + player.getName() + " &7is no longer a hunter!");
+
+        plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
         plugin.configUtils.saveFile("data");
     }
 

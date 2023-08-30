@@ -63,15 +63,9 @@ public class DeathEvent implements Listener {
 
         // Check if archer or hunter
         if (plugin.archers.contains(player.getUniqueId())) {
-            plugin.archers.remove(player.getUniqueId());
-            Utils.sendMessage(player, "&cYou are no longer an archer!");
-            plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
-            plugin.configUtils.saveFile("data");
+            plugin.archerHandler.removeArcher(player);
         } else if (plugin.hunters.contains(player.getUniqueId())) {
-            plugin.hunters.remove(player.getUniqueId());
-            Utils.sendMessage(player, "&cYou are no longer a hunter!");
-            plugin.configUtils.getData().set(player.getUniqueId() + ".role", "player");
-            plugin.configUtils.saveFile("data");
+            plugin.hunterHandler.removeHunter(player);
         }
 
     }
