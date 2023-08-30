@@ -29,26 +29,9 @@ public class HunterHandler implements Listener {
         this.plugin = plugin;
     }
 
-    public void addHunter(Player player) {
+    public void addHunter(Player player, boolean giveCrossbow) {
         Utils.sendMessage(player, "&aYou are now a hunter!");
         plugin.hunters.add(player.getUniqueId());
-
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.CROSSBOW) {
-                ItemMeta itemMeta = item.getItemMeta();
-                PersistentDataContainer itemDataContainer = itemMeta.getPersistentDataContainer();
-                if (itemDataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
-                    if (itemDataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING).equals("hunter")) {
-                        Utils.announceMessage("&a" + player.getName() + " &7is the hunter!");
-                        Utils.sendMessage(player, "&aYou are now a hunter!");
-
-                        plugin.configUtils.getData().set(player.getUniqueId() + ".role", "hunter");
-                        plugin.configUtils.saveFile("data");
-                        return;
-                    }
-                }
-            }
-        }
 
         ItemStack crossbow = new ItemStack(Material.CROSSBOW, 1);
         ItemMeta crossbowMeta = crossbow.getItemMeta();
@@ -62,7 +45,7 @@ public class HunterHandler implements Listener {
         dataContainer.set(plugin.getRoleKey(), PersistentDataType.STRING, "hunter");
 
         crossbow.setItemMeta(crossbowMeta);
-        player.getInventory().addItem(crossbow);
+        if (giveCrossbow) { player.getInventory().addItem(crossbow); }
 
         Utils.announceMessage("&a" + player.getName() + " &7is the hunter!");
         Utils.sendMessage(player, "&aYou are now a hunter!");

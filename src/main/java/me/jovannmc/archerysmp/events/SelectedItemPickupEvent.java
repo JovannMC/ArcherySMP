@@ -28,10 +28,10 @@ public class SelectedItemPickupEvent implements Listener {
             String role = dataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING);
             if (role.equals("archer")) {
                 Bukkit.getLogger().info("Adding archer");
-                plugin.archerHandler.addArcher(player);
+                plugin.archerHandler.addArcher(player, false);
             } else if (role.equals("hunter")) {
                 Bukkit.getLogger().info("Adding hunter");
-                plugin.hunterHandler.addHunter(player);
+                plugin.hunterHandler.addHunter(player, false);
             }
         }
     }

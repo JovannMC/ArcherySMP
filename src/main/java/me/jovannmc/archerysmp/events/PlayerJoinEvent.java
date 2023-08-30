@@ -30,10 +30,10 @@ public class PlayerJoinEvent implements Listener {
         if (plugin.configUtils.getData().contains(player.getUniqueId() + ".role")) {
             String role = plugin.configUtils.getData().getString(player.getUniqueId() + ".role");
             if (role.equals("archer")) {
-                plugin.archerHandler.addArcher(player);
+                plugin.archerHandler.addArcher(player, false);
                 Bukkit.getLogger().info("Player role: archer");
             } else if (role.equals("hunter")) {
-                plugin.hunterHandler.addHunter(player);
+                plugin.hunterHandler.addHunter(player, false);
                 Bukkit.getLogger().info("Player role: hunter");
             }
         }

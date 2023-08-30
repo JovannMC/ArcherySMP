@@ -34,26 +34,9 @@ public class ArcherHandler implements Listener {
         this.plugin = plugin;
     }
 
-    public void addArcher(Player player) {
+    public void addArcher(Player player, boolean giveBow) {
         Utils.sendMessage(player, "&aYou are now an archer!");
         plugin.archers.add(player.getUniqueId());
-
-        for (ItemStack item : player.getInventory().get) {
-            if (item != null && item.getType() == Material.BOW) {
-                ItemMeta itemMeta = item.getItemMeta();
-                PersistentDataContainer itemDataContainer = itemMeta.getPersistentDataContainer();
-                if (itemDataContainer.has(plugin.getRoleKey(), PersistentDataType.STRING)) {
-                    if (itemDataContainer.get(plugin.getRoleKey(), PersistentDataType.STRING).equals("archer")) {
-                        Utils.announceMessage("&a" + player.getName() + " &7is the archer!");
-                        Utils.sendMessage(player, "&aYou are now an archer!");
-
-                        plugin.configUtils.getData().set(player.getUniqueId() + ".role", "archer");
-                        plugin.configUtils.saveFile("data");
-                        return;
-                    }
-                }
-            }
-        }
 
         ItemStack bow = new ItemStack(Material.BOW, 1);
         ItemMeta bowMeta = bow.getItemMeta();
@@ -69,7 +52,8 @@ public class ArcherHandler implements Listener {
         dataContainer.set(plugin.getRoleKey(), PersistentDataType.STRING, "archer");
 
         bow.setItemMeta(bowMeta);
-        player.getInventory().addItem(bow);
+
+        if (giveBow) { player.getInventory().addItem(bow); }
 
         Utils.announceMessage("&a" + player.getName() + " &7is the archer!");
         Utils.sendMessage(player, "&aYou are now an archer!");

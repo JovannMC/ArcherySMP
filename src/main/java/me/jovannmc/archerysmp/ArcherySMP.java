@@ -67,13 +67,13 @@ public final class ArcherySMP extends JavaPlugin implements CommandExecutor {
             if (Bukkit.getOnlinePlayers().size() == 0) { Utils.sendMessage(sender, "&cThere are no players online."); return false; }
 
             Player randomPlayer = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
-            archerHandler.addArcher(randomPlayer);
+            archerHandler.addArcher(randomPlayer, true);
         } else if (cmd.getName().equals("hunter")) {
             if (!sender.hasPermission("archerysmp.hunter")) { Utils.sendMessage(sender, "&cYou don't have permission to use that command."); return false; }
             if (Bukkit.getOnlinePlayers().size() == 0) { Utils.sendMessage(sender, "&cThere are no players online."); return false; }
 
             Player randomPlayer = Bukkit.getOnlinePlayers().stream().skip((int) (Bukkit.getOnlinePlayers().size() * Math.random())).findFirst().orElse(null);
-            hunterHandler.addHunter(randomPlayer);
+            hunterHandler.addHunter(randomPlayer, true);
         }
         return false;
     }
