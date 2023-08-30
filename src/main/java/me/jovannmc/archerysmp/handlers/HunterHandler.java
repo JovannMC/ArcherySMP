@@ -92,7 +92,7 @@ public class HunterHandler implements Listener {
 
         player.getWorld().getNearbyEntities(player.getLocation(), 10, 10, 10).forEach(entity -> {
             if (entity instanceof Player && entity != player) {
-                ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 1));
+                ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 0));
             }
         });
         poisonCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 60000);

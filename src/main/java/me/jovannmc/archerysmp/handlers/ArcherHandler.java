@@ -119,7 +119,7 @@ public class ArcherHandler implements Listener {
             }
         }
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 2));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 1));
         strengthCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 40000);
 
         CooldownHandler cooldownHandler = new CooldownHandler(player, 40000, "Strength");
@@ -136,7 +136,7 @@ public class ArcherHandler implements Listener {
                 arrow.setPickupStatus(AbstractArrow.PickupStatus.DISALLOWED);
 
                 double currentDamage = arrow.getDamage();
-                double newDamage = currentDamage + (hasStrength ? 4.0 : 0.0);
+                double newDamage = currentDamage + (hasStrength ? 2.0 : 0.0);
 
                 arrow.setDamage(newDamage);
             }
